@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: my-app
+  name: simple-devsecops
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: my-app
+      app: simple-devsecops
   template:
     metadata:
       labels:
-        app: my-app
+        app: simple-devsecops
     spec:
       containers:
-        - name: my-app
-          image: my-app:latest
-          ports:
-            - containerPort: 5000
+      - name: simple-devsecops
+        image: simple-devsecops:latest
+        ports:
+        - containerPort: 5000

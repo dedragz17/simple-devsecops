@@ -1,37 +1,40 @@
 pipeline {
-    agent any
+  agent any
 
-    stages {
-        stage('Clone') {
-            steps {
-                git 'https://github.com/kamu/my-app.git'
-            }
-        }
+  environment {
+    IMAGE_NAME = "simple-devsecops:latest"
+  }
 
-        stage('Build Docker Image') {
-            steps {
-                sh 'docker build -t my-app:latest .'
-            }
-        }
-
-        stage('Security Scan (Trivy)') {
-            steps {
-                sh 'trivy image my-app:latest || true'
-            }
-        }
-
-        stage('Push to Minikube') {
-            steps {
-                sh 'eval $(minikube docker-env)'
-                sh 'docker build -t my-app:latest .'
-            }
-        }
-
-        stage('Deploy to Kubernetes') {
-            steps {
-                sh 'kubectl apply -f k8s/deployment.yaml'
-                sh 'kubectl apply -f k8s/service.yaml'
-            }
-        }
+  stages {
+    stage('Checkout') {
+      steps {
+        git url: 'https://github.com/dedragz17/simple-devsecops.git'
+      }
     }
+
+    stage('Build Docker Image') {
+      steps {
+        sh 'docker build -t $IMAGE_NAME .'
+      }
+    }
+
+    stage('Security Scan with Trivy') {
+      steps {
+        sh '''
+          if ! command -v trivy &> /dev/null; then
+            echo "Installing Trivy..."
+            curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+          fi
+          trivy image --severity HIGH,CRITICAL $IMAGE_NAME || true
+        '''
+      }
+    }
+
+    stage('Deploy to Minikube') {
+      steps {
+        sh 'kubectl apply -f k8s/deployment.yaml'
+        sh 'kubectl apply -f k8s/service.yaml'
+      }
+    }
+  }
 }
