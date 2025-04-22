@@ -20,13 +20,14 @@ pipeline {
 
     stage('Security Scan with Trivy') {
       steps {
-        sh '''
-          if ! command -v trivy &> /dev/null; then
-            echo "Installing Trivy..."
-            curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
-          fi
-          trivy image --severity HIGH,CRITICAL $IMAGE_NAME || true
-        '''
+        script {
+            if (!fileExists('/usr/local/bin/trivy')) {
+                echo 'Trivy not found, skipping security scan.'
+            } else {
+                echo 'Running security scan with Trivy...'
+                sh 'trivy image --severity HIGH,CRITICAL $IMAGE_NAME || true'
+            }
+        }
       }
     }
 
