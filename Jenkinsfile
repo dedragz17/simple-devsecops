@@ -39,7 +39,7 @@ pipeline {
                 // Activate the virtual environment and run TruffleHog
                 sh '''
                     . /var/jenkins_home/venv/bin/activate
-                    trufflehog --depth 10 --json $WORKSPACE
+                    trufflehog --json --no-progress $WORKSPACE
                 '''
             }
         }
