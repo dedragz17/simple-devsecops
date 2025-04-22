@@ -46,6 +46,18 @@ pipeline {
         }
     }
 
+    stage('SonarQube Analysis') {
+        steps {
+            script {
+                def scannerHome = tool 'SonarQube Scanner'
+                withSonarQubeEnv('sonar-docker') {
+                    sh "${scannerHome}/bin/sonar-scanner"
+                }
+            }
+        }
+    }
+
+
     stage('Deploy to Minikube') {
       steps {
         script {
