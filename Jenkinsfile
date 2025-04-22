@@ -8,7 +8,7 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        git url: 'https://github.com/dedragz17/simple-devsecops.git'
+        git branch: 'main', url: 'https://github.com/dedragz17/simple-devsecops.git'
       }
     }
 
