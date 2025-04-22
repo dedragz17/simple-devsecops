@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: simple-devsecops
-        image: simple-devsecops:latest
+        image: dragz17/simple-devsecops
         ports:
         - containerPort: 5000

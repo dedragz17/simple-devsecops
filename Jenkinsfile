@@ -31,6 +31,20 @@ pipeline {
       }
     }
 
+    stage('Secret Scan with TruffleHog') {
+        steps {
+            script {
+                echo 'Running TruffleHog scan...'
+                // Run TruffleHog scan directly
+                // Activate the virtual environment and run TruffleHog
+                sh '''
+                    source /path/to/your/venv/bin/activate
+                    trufflehog --depth 10 --json $WORKSPACE
+                '''
+            }
+        }
+    }
+
     stage('Deploy to Minikube') {
       steps {
         script {
